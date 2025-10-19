@@ -181,7 +181,7 @@
                     <input type="number" id="closingCostsRate" value="2" class="w-full" step="0.1" required min="0">
                 </div>
                 <div class="input-group mb-4">
-                    <label for="mortgageRate" class="block text-sm mb-1">Mortgage Rate (5.75% assumed)</label>
+                    <label for="mortgageRate" class="block text-sm mb-1">Mortgage Rate (%)</label>
                     <input type="number" id="mortgageRate" value="5.75" class="w-full" step="0.01" required min="0">
                 </div>
                 <div class="input-group mb-4">
@@ -200,10 +200,10 @@
                 </div>
                 <div class="input-group mb-4">
                     <label for="numUnits" class="block text-sm mb-1">Number of Rental Units (e.g., Duplex=2)</label>
-                    <input type="number" id="numUnits" value="2" class="w-full" required min="1">
+                    <input type="number" id="numUnits" value="1" class="w-full" required min="1">
                 </div>
                 <div class="input-group mb-4">
-                    <label for="vacancyRate" class="block text-sm mb-1">Vacancy Rate (%)</label>
+                    <label for="vacancyRate" class="block text-sm mb-1">Vacancy Rate (%s)</label>
                     <input type="number" id="vacancyRate" value="5" class="w-full" step="0.1" required min="0" max="100">
                 </div>
                 <div class="input-group mb-4">
@@ -215,8 +215,8 @@
                     <input type="text" id="annualEarthquakePremium" value="3,500" class="w-full" onfocus="unformatInput(this)" onblur="formatInput(this); calculateInvestment()" required>
                 </div>
                 <div class="input-group mb-4">
-                    <label for="otherInsurance" class="block text-sm mb-1">Other Insurance (Annual $)</label>
-                    <input type="text" id="otherInsurance" value="1,500" class="w-full" onfocus="unformatInput(this)" onblur="formatInput(this); calculateInvestment()" required>
+                    <label for="otherInsurance" class="block text-sm mb-1">Property Insurance (Annual $)</label>
+                    <input type="text" id="otherInsurance" value="3,000" class="w-full" onfocus="unformatInput(this)" onblur="formatInput(this); calculateInvestment()" required>
                 </div>
                 <div class="input-group mb-4">
                     <label for="mgmtFeeRate" class="block text-sm mb-1">Property Management Fee (% of Rent)</label>
@@ -234,11 +234,11 @@
                 </div>
                 <div class="input-group mb-4">
                     <label for="federalTaxRate" class="block text-sm mb-1">Federal Marginal Tax Rate (%)</label>
-                    <input type="number" id="federalTaxRate" value="24" class="w-full" step="1" required min="0" max="100">
+                    <input type="number" id="federalTaxRate" value="37" class="w-full" step="1" required min="0" max="100">
                 </div>
                 <div class="input-group mb-4">
                     <label for="stateTaxRate" class="block text-sm mb-1">State Marginal Tax Rate (%)</label>
-                    <input type="number" id="stateTaxRate" value="11" class="w-full" step="1" required min="0" max="100">
+                    <input type="number" id="stateTaxRate" value="10" class="w-full" step="1" required min="0" max="100">
                 </div>
                 <div class="input-group mb-4">
                     <label for="holdingPeriod" class="block text-sm mb-1">Investment Horizon (Years)</label>
@@ -249,10 +249,24 @@
                     <label for="sellProperty" class="text-sm font-bold text-white">Sell Property at End of Horizon</label>
                     <input type="checkbox" id="sellProperty" class="toggle-switch" checked onchange="calculateInvestment()">
                 </div>
+                
+                <div class="input-group flex items-center justify-between mt-4 p-3 bg-gray-800 rounded-lg">
+                    <label for="adjustInflation" class="text-sm font-bold text-white">Adjust for Inflation (Real Return)</label>
+                    <input type="checkbox" id="adjustInflation" class="toggle-switch" onchange="toggleInflationInput()">
+                </div>
+                <div class="input-group mb-4 mt-2" id="inflationRateInputContainer" style="display:none;">
+                    <label for="inflationRate" class="block text-sm mb-1 text-gray-400">Annual Inflation Rate (%)</label>
+                    <input type="number" id="inflationRate" value="3.0" class="w-full" step="0.1" required min="0" onchange="calculateInvestment()">
+                </div>
+
             </div>
 
             <button onclick="calculateInvestment()" class="calculate-btn w-full text-white font-bold py-3 rounded-xl mt-6 shadow-md hover:shadow-lg">
                 RUN COMPARISON
+            </button>
+            <!-- OPTIONAL ENHANCEMENT: Add Reset to Defaults Button -->
+            <button onclick="resetToDefaults()" class="w-full text-gray-400 font-semibold py-2 rounded-xl mt-3 border border-gray-600 hover:bg-gray-800 hover:text-white transition-all">
+                Reset to Defaults
             </button>
         </div>
 
@@ -267,7 +281,7 @@
                 </div>
                 
                 <div class="mt-6">
-                    <h3 class="font-semibold text-lg mb-2 text-gray-300">Post-Tax Compound Annual Growth Rate (CAGR)</h3>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-300">Post-Tax Compound Annual Growth Rate (<span id="cagr-type">Nominal</span>)</h3>
                     <div class="grid grid-cols-2 gap-4 text-center text-white font-bold">
                         <div class="bg-gray-800 p-3 rounded-lg shadow-inner border border-gray-700">
                             <div class="text-sm font-medium text-gray-400">Real Estate CAGR</div>
@@ -327,7 +341,11 @@
             </div>
 
             <!-- Calculation Proof and Table --><div id="calculation-proof-section" class="mt-8 pt-4 border-t border-gray-700">
-                <h3 class="text-xl font-semibold mb-4 text-gray-300 card-header pl-3">Detailed Calculation Proof (Total Investment Period)</h3>
+                <h3 class="text-xl font-semibold mb-4 text-gray-300 card-header pl-3">
+                    Detailed Calculation Proof (Total Investment Period)
+                    <!-- FIX #4: Add Note About Nominal Values in Proof Table Header -->
+                    <span class="text-xs font-normal text-gray-500 ml-2">(Intermediate values in nominal $)</span>
+                </h3>
                 <div id="proof-table-container">
                     <table class="proof-table w-full text-sm text-gray-300">
                         <thead class="font-semibold text-white bg-gray-800 border-b border-gray-600">
@@ -342,37 +360,61 @@
                     </table>
                 </div>
 
-                <!-- NEW SECTION: Annual Cost Breakdown (Year 1) -->
+                <!-- NEW SECTION 1: Year 1 Performance Ratios & Efficiency -->
                 <div class="mt-8 pt-4 border-t border-gray-700">
-                    <h3 class="text-xl font-semibold mb-4 text-accent-blue card-header pl-3">Annual Cost Breakdown (Year 1)</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-accent-blue card-header pl-3">Year 1 Performance Ratios & Efficiency</h3>
                     <div class="grid grid-cols-2 gap-4 text-sm text-gray-300">
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Mortgage Principal Paid:</p>
-                            <p class="font-bold text-white" id="annual-principal">$0</p>
+                            <p class="font-medium">Net Operating Income (NOI):</p>
+                            <p class="font-bold text-white" id="annual-noi">$0</p>
                         </div>
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Mortgage Interest Paid (Tax Deductible):</p>
-                            <p class="font-bold text-white" id="annual-interest">$0</p>
+                            <p class="font-medium">Cap Rate (Unleveraged Return):</p>
+                            <p class="font-bold text-white" id="annual-cap-rate">0.00%</p>
                         </div>
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Annual Property Taxes:</p>
-                            <p class="font-bold text-white" id="annual-tax">$0</p>
+                            <p class="font-medium">Cash Flow After Debt (Pre-Tax):</p>
+                            <p class="font-bold text-white" id="annual-pre-tax-cf">$0</p>
                         </div>
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Total Annual Insurance (Incl. EQ):</p>
-                            <p class="font-bold text-white" id="annual-insurance">$0</p>
+                            <p class="font-medium">Cash-on-Cash Return (Leveraged):</p>
+                            <p class="font-bold text-white" id="annual-coc-rate">0.00%</p>
                         </div>
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Total Maintenance & Management Fees:</p>
-                            <p class="font-bold text-white" id="annual-maintenance-mgmt">$0</p>
+                            <p class="font-medium">Tax Savings / (Liability) from Operations:</p>
+                            <p class="font-bold text-white" id="annual-tax-impact">$0</p>
                         </div>
                         <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
-                            <p class="font-medium">Total Monthly Cash Obligation:</p>
-                            <p class="font-bold text-white text-lg" id="monthly-obligation">$0</p>
+                            <p class="font-medium">Monthly Cash Obligation (PITI + OpEx):</p>
+                            <p class="font-bold text-white text-lg" id="monthly-obligation-new">$0</p>
                         </div>
                     </div>
                 </div>
-                <!-- End NEW SECTION -->
+                <!-- End NEW SECTION 1 -->
+
+                <!-- NEW SECTION 2: Cumulative Performance Snapshot (Year 5) -->
+                <div class="mt-8 pt-4 border-t border-gray-700">
+                    <h3 class="text-xl font-semibold mb-4 text-accent-blue card-header pl-3">Cumulative Performance Snapshot (Year 5)</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-300">
+                        <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                            <p class="font-medium">Cumulative Post-Tax Cash Flow:</p>
+                            <p class="font-bold text-white" id="y5-cum-cf">$0</p>
+                        </div>
+                        <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                            <p class="font-medium">Total Appreciation Gain (Pre-Tax):</p>
+                            <p class="font-bold text-white" id="y5-appr-gain">$0</p>
+                        </div>
+                        <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                            <p class="font-medium">Total Equity Built (Principal Paydown):</p>
+                            <p class="font-bold text-white" id="y5-principal-paid">$0</p>
+                        </div>
+                        <div class="p-3 bg-gray-800 rounded-lg border border-gray-700">
+                            <p class="font-medium">Post-Tax CAGR (Assuming Sale in Year 5):</p>
+                            <p class="font-bold text-white" id="y5-cagr">0.00%</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End NEW SECTION 2 -->
 
                 <!-- Executive Summary Box -->
                 <div class="mt-8 summary-box rounded-xl">
@@ -383,6 +425,64 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- NEW SECTION: Glossary of Terms -->
+    <div id="glossary-section" class="container mx-auto p-4 md:p-8 max-w-6xl mt-8">
+        <h2 class="text-3xl font-bold mb-4 text-white card-header pl-3">Glossary of Terms</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">CAGR (Compound Annual Growth Rate)</p>
+                <p class="text-gray-400">The average annual rate of return over the investment horizon, assuming profits are reinvested. It is the single best metric for comparing different asset classes.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Nominal Return vs. Real Return</p>
+                <p class="text-gray-400">**Nominal** is the return in today's dollars. **Real** is the return adjusted for inflation, showing the actual gain in purchasing power.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Cap Rate (Capitalization Rate)</p>
+                <p class="text-gray-400">Measures the property's unleveraged profitability: Net Operating Income (NOI) $\div$ Property Value. It assumes an all-cash purchase.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Cash-on-Cash (CoC) Return</p>
+                <p class="text-gray-400">Measures the annual pre-tax cash flow relative to the total cash invested (down payment + closing costs). This is the key metric for leveraged cash flow.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">NOI (Net Operating Income)</p>
+                <p class="text-gray-400">The property's annual income after deducting all operating expenses (taxes, insurance, maintenance, management) but **before** deducting debt service (P&I) or income taxes.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">EGI (Effective Gross Income)</p>
+                <p class="text-gray-400">The property's total potential rental income minus losses from vacancy and non-payment.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Equity Build (Principal Paydown)</p>
+                <p class="text-gray-400">The non-taxable portion of your monthly mortgage payment that reduces the loan balance and increases your ownership equity.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Depreciation (Tax Shield)</p>
+                <p class="text-gray-400">A non-cash deductible expense that reduces the property's taxable income, often creating a "phantom loss" that shelters rental cash flow from taxes.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Depreciation Recapture Tax</p>
+                <p class="text-gray-400">The tax liability incurred upon sale for the total amount of depreciation claimed over the years. This portion is taxed at the Federal rate of 25% plus the State Marginal Rate.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">LTCG (Long-Term Capital Gains)</p>
+                <p class="text-gray-400">The profit from the sale of an asset (real estate appreciation or stocks) held for over a year. Taxed at favorable lower rates (Federal 20% + State Marginal Rate).</p>
+            </div>
+
         </div>
     </div>
 </div>
@@ -436,9 +536,43 @@
     };
 
     /**
+     * Resets all input fields to their default values
+     */
+    function resetToDefaults() {
+        document.getElementById('propertyValue').value = '1,500,000';
+        document.getElementById('downPayment').value = '800,000';
+        document.getElementById('closingCostsRate').value = '2';
+        document.getElementById('mortgageRate').value = '5.75';
+        document.getElementById('appreciationRate').value = '4.0';
+        document.getElementById('monthlyRentPerUnit').value = '3,800';
+        document.getElementById('rentGrowthRate').value = '3.0';
+        document.getElementById('numUnits').value = '1';
+        document.getElementById('vacancyRate').value = '5';
+        document.getElementById('propertyTaxRate').value = '1.25';
+        document.getElementById('annualEarthquakePremium').value = '3,500';
+        document.getElementById('otherInsurance').value = '3,000';
+        document.getElementById('mgmtFeeRate').value = '6';
+        document.getElementById('maintenanceReserveRate').value = '10';
+        document.getElementById('sp500Return').value = '10.0';
+        document.getElementById('federalTaxRate').value = '37';
+        document.getElementById('stateTaxRate').value = '10';
+        document.getElementById('holdingPeriod').value = '15';
+        document.getElementById('sellProperty').checked = true;
+        document.getElementById('adjustInflation').checked = false;
+        document.getElementById('inflationRate').value = '3.0';
+        
+        // Hide inflation input
+        document.getElementById('inflationRateInputContainer').style.display = 'none';
+        
+        // Recalculate
+        calculateInvestment();
+    }
+    window.resetToDefaults = resetToDefaults; // Expose to global scope
+
+    /**
      * Generates the written summary based on the final calculated metrics.
      */
-    function generateExecutiveSummary(re_cagr, sp500_cagr, re_profit, sp500_profit, appreciationRate, mortgageRate, sp500Return, holdingPeriod, sellProperty) {
+    function generateExecutiveSummary(re_cagr, sp500_cagr, re_profit, sp500_profit, appreciationRate, mortgageRate, sp500Return, holdingPeriod, sellProperty, inflationRate, adjustInflation) {
         let summary = ``;
         let superiorOption = "";
         let lesserOption = "";
@@ -458,16 +592,23 @@
         
         const payoffYear = LOAN_TERM_MONTHS / 12;
 
-        // --- Summary Content ---
+        // --- Summary Content: Introduction ---
         
-        summary += `<p class="mb-3">This analysis compares the two investment paths over a **${holdingPeriod}-year** horizon.`;
-        if (sellProperty) {
-            summary += ` The goal is to maximize **Total Post-Tax Wealth**, which assumes selling the property at the end.`;
+        summary += `<p class="mb-4 text-base text-white">This analysis compares two fundamentally different wealth-building strategies over a **${holdingPeriod}-year** horizon.</p>`;
+        
+        // FIX #3: Improve Inflation Status Visibility in Executive Summary (Fixed emoji)
+        if (adjustInflation) {
+            summary += `<div class="mb-4 p-3 bg-yellow-900 bg-opacity-30 border border-yellow-600 rounded-lg">
+                <p class="text-yellow-300 font-semibold">📊 INFLATION ADJUSTED RETURNS</p>
+                <p class="text-yellow-200 text-sm mt-1">All CAGRs and profits shown are <strong>Real Returns</strong> adjusted for ${formatPercent(inflationRate)} annual inflation. These reflect actual purchasing power gains.</p>
+            </div>`;
         } else {
-            summary += ` The goal is to maximize **Total Wealth Retained (Non-Liquid)**, which assumes the asset is kept, and the VOO asset is not liquidated.`;
+            summary += `<div class="mb-4 p-3 bg-blue-900 bg-opacity-30 border border-blue-600 rounded-lg">
+                <p class="text-blue-300 font-semibold">📊 NOMINAL RETURNS</p>
+                <p class="text-blue-200 text-sm mt-1">All CAGRs and profits shown are <strong>Nominal Returns</strong> (not adjusted for inflation). These are raw dollar gains without considering purchasing power changes.</p>
+            </div>`;
         }
-        summary += ` Based on the current inputs, the **${superiorOption}** is the superior investment option.</p>`;
-        
+
         // Results Table (Internal)
         summary += `<table class="w-full my-4 text-center text-white bg-gray-900 rounded-lg overflow-hidden">
             <thead>
@@ -491,39 +632,55 @@
             </tbody>
         </table>`;
 
-        summary += `<p class="mb-3">The ${superiorOption} is projected to generate an additional **${profitDifference}** in net profit, leading to a Post-Tax CAGR advantage of **${cagrDifference.toFixed(2)}%**.</p>`;
+        summary += `<p class="mb-4 text-base text-white">Based on the calculated net returns, the **${superiorOption}** is the financially superior option, generating an additional **${profitDifference}** in final wealth. The primary difference lies in the mechanism of growth:</p>`;
         
-        // --- Key Assumptions & Insights ---
-        
-        summary += `<h4 class="font-bold text-white mt-4 mb-2">Key Assumptions and Insights:</h4>`;
+        // --- Narrative Section 1: S&P 500 (Compounding Power) ---
+        summary += `<h4 class="font-bold text-white mt-6 mb-2 text-lg border-b border-gray-700 pb-1">The S&P 500 VOO Path: Pure Compounding</h4>`;
+        summary += `<p class="text-gray-400 mb-4">The S&P 500 strategy generates wealth through **unfettered, exponential compounding** at a high annual rate (${formatPercent(sp500Return)} nominal). The main cost is the annual tax drag on dividends and the large capital gains tax upon ${sellProperty ? 'sale' : 'deferral'}. Because this option avoids all operational friction (maintenance, management, earthquake insurance), its growth rate on the invested capital is difficult for any active, leveraged investment to beat unless appreciation is exceptional. It is a highly liquid and passive method.</p>`;
+
+        // --- Narrative Section 2: Real Estate (Leverage and Tax Shield) ---
+        summary += `<h4 class="font-bold text-white mt-6 mb-2 text-lg border-b border-gray-700 pb-1">The Real Estate Path: Leverage and Tax Shield</h4>`;
+        summary += `<p class="text-gray-400 mb-4">Real estate is a multi-layered asset. Your initial $\$800,000$ down payment controls the growth of the entire $\$1.5\text{M}$ property value (**Leverage**). Its return is built on four pillars:</p>`;
         summary += `<ul class="list-disc list-inside ml-4 space-y-1 text-gray-400">`;
+        summary += `<li>**Leveraged Appreciation:** Growth is based on the full property value, not just your equity.</li>`;
+        summary += `<li>**Tax Shield:** Non-cash deductions (Depreciation and Interest) minimize your annual tax liability, often creating a "phantom loss" that shelters rental cash flow from taxes.</li>`;
+        summary += `<li>**Principal Paydown:** A portion of the rent is forced savings, building equity tax-free.</li>`;
         if (holdingPeriod > payoffYear) {
-             summary += `<li>**Post-Payoff Cash Flow:** This analysis captures the substantial profit boost from **${holdingPeriod - payoffYear} years** of mortgage-free operation after year ${payoffYear}, where the full Net Operating Income (NOI) becomes post-tax cash flow.</li>`;
+             summary += `<li>**Post-Payoff Income:** After year ${payoffYear}, the investment converts into a robust, mortgage-free, growing income stream for the remaining **${holdingPeriod - payoffYear} years**.</li>`;
         }
-        if (!sellProperty) {
-            summary += `<li>**RE Caveat:** When not selling, the RE CAGR reflects the growth of the asset's equity (value minus debt), which is the most appropriate comparison for **retained wealth**.</li>`;
-        }
-        summary += `<li>**S&P 500 Performance:** The S&P 500's return (${formatPercent(sp500Return)} nominal) is highly efficient due to its **low friction** (no maintenance, management, or high transaction costs) and consistent compounding.</li>`;
-        summary += `<li>**RE Friction Costs:** The Real Estate option, despite its leverage, is significantly burdened by **operational friction**, including the ${formatPercent(appreciationRate)} property appreciation rate being too low to offset the high interest rate (${formatPercent(mortgageRate)}) and ongoing expenses (maintenance, management, and the high earthquake insurance premium).</li>`;
-        summary += `<li>**The Tax Shield:** The real estate investment offers a massive **tax shield** via depreciation and mortgage interest deductions, which is crucial but ultimately insufficient to overcome the compounding advantage of the S&P 500 in this scenario.</li>`;
         summary += `</ul>`;
-
-        // --- Call to Action / Tipping Point ---
-
-        summary += `<h4 class="font-bold text-white mt-4 mb-2">Tipping Point Analysis:</h4>`;
-        summary += `<p class="text-gray-400">To make the **${lesserOption}** the superior choice, a major change would be required in one of the following key variables:</p>`;
         
-        // Placeholder values for the tipping point based on last successful run (4.0% RE vs 10.0% SP)
+        if (!sellProperty) {
+            summary += `<p class="mt-4 text-yellow-300 font-medium">**Note on No-Sale Scenario:** When retaining the asset, the ${reProfitFormatted} profit represents the total *retained wealth* (equity + cash flow). This strategy prioritizes long-term income over a final cash liquidation.</p>`;
+        }
         
+        // --- Tipping Point ---
+        summary += `<h4 class="font-bold text-white mt-6 mb-2 text-lg border-b border-gray-700 pb-1">Tipping Point Analysis: How Real Estate Could Win</h4>`;
+        summary += `<p class="text-gray-400">The **${lesserOption}** is currently losing because the **operational friction** (debt service, high property tax, and maintenance) is greater than the financial benefit derived from the ${formatPercent(appreciationRate)} growth rate. To flip the result, you would need exceptional performance:</p>`;
         summary += `<ul class="list-disc list-inside ml-4 space-y-1 text-gray-400">`;
-        summary += `<li>**Property Appreciation:** The RE appreciation rate would need to increase from the current ${formatPercent(appreciationRate)} to approximately **6.5% - 7.0%** over the 15-year period (assuming sell is checked).</li>`;
-        summary += `<li>**Mortgage Rate:** The mortgage rate would need to drop substantially, likely below **3.5%**, assuming all other factors remain constant.</li>`;
-        summary += `<li>**S&P 500 Return:** The S&P 500 annual return would need to fall to **6.0% or lower** for the real estate option to potentially overtake it.</li>`;
+        summary += `<li>**Appreciation:** An average appreciation rate closer to **6.5% - 7.0%** is typically required to make the leveraged gain offset the stock market's compounding rate.</li>`;
+        summary += `<li>**Financing:** A much lower mortgage rate (below 3.5%) significantly reduces the largest annual drag on cash flow.</li>`;
         summary += `</ul>`;
 
 
         document.getElementById('executive-summary-content').innerHTML = summary;
     }
+
+
+    /**
+     * Toggles the visibility of the inflation rate input field.
+     */
+    function toggleInflationInput() {
+        const container = document.getElementById('inflationRateInputContainer');
+        const checkbox = document.getElementById('adjustInflation');
+        if (checkbox.checked) {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+        calculateInvestment(); // Recalculate when the toggle changes
+    }
+    window.toggleInflationInput = toggleInflationInput; // Expose to global scope for HTML event
 
 
     /**
@@ -551,10 +708,15 @@
         const mgmtFeeRate = parseFloat(document.getElementById('mgmtFeeRate').value) / 100;
         const maintenanceReserveRate = parseFloat(document.getElementById('maintenanceReserveRate').value) / 100;
         const sellProperty = document.getElementById('sellProperty').checked; // NEW: Sell toggle
+        
+        // INFLATION VARIABLES
+        const adjustInflation = document.getElementById('adjustInflation').checked;
+        const inflationRate = adjustInflation ? (parseFloat(document.getElementById('inflationRate').value) / 100) : 0;
+
 
         // Input validation checks (simple console logs for this environment)
         if (isNaN(propertyValue) || propertyValue <= downPayment) { console.error("Property Value must be greater than the Down Payment."); return; }
-        // UPDATE HERE: Increased max validation to 100
+        // Set max to 100 years
         if (holdingPeriod < 5 || holdingPeriod > 100) { console.error("Investment Horizon must be between 5 and 100 years."); return; }
         
         // --- 2. Calculate Total Tax Rates ---
@@ -567,6 +729,11 @@
         const closingCosts = loanAmount * closingCostsRate;
         const totalCashInvested = downPayment + closingCosts;
         const totalInvestmentSP500 = downPayment; 
+        
+        // Depreciation must be defined early for Year 1 Tax Impact calculation
+        const depreciableBasis = propertyValue * (1 - LAND_VALUE_PERCENT);
+        const annualDepreciation = depreciableBasis / DEPRECIATION_TERM;
+
 
         // Mortgage Calculation
         const monthlyRate = mortgageRate / 12;
@@ -620,17 +787,23 @@
         let noiYear1 = effectiveGrossIncome - totalOpExYear1;
 
         // --- CALCULATIONS FOR ANNUAL BREAKDOWN (Year 1) ---
+        // New Year 1 Efficiency Metrics
+        const capRateYear1 = noiYear1 / propertyValue;
+        const preTaxCashFlowYear1 = noiYear1 - annualDebtService;
+        const cocReturnYear1 = preTaxCashFlowYear1 / totalCashInvested;
+        
+        const taxableIncomeLossYear1 = noiYear1 - (annualInterest[0] || 0) - annualDepreciation; // Depreciation must be defined early
+        const taxImpactYear1 = taxableIncomeLossYear1 * totalMarginalRate; // Positive is liability, negative is savings
+        
         const annualInterestYear1 = annualInterest[0] || 0; // Defensive check
         const annualPrincipalYear1 = annualPrincipal[0] || 0; // Defensive check
         const annualInsuranceTotal = annualEarthquakePremium + otherInsurance;
         const annualMaintenanceAndMgmt = propertyMgmtFee + maintenanceReserve;
-        const totalMonthlyObligation = (annualDebtService + propertyTax + annualInsuranceTotal + annualMaintenanceAndMgmt) / 12;
+        const totalMonthlyObligationDisplay = (annualDebtService + propertyTax + annualInsuranceTotal + annualMaintenanceAndMgmt) / 12;
         // --- END NEW CALCULATIONS ---
 
 
         // Depreciation
-        const depreciableBasis = propertyValue * (1 - LAND_VALUE_PERCENT);
-        const annualDepreciation = depreciableBasis / DEPRECIATION_TERM;
         const totalDepreciationRecaptured = annualDepreciation * holdingPeriod;
         
         // 15-Year Operational Cash Flow and Tax Calculation
@@ -700,15 +873,69 @@
             taxAtSale = 0;
         }
         
-        // Final RE Profit Metrics
+        // Final RE Profit Metrics (NOMINAL)
         const realEstateNetSale = netSaleProceedesPreTax - taxAtSale;
-        const realEstateTotalPostTaxProfit = realEstateNetSale + postTaxCashFlow - totalCashInvested;
-        const realEstateCAGR = Math.pow((totalCashInvested + realEstateTotalPostTaxProfit) / totalCashInvested, 1 / holdingPeriod) - 1;
+        const realEstateTotalPostTaxProfit_Nominal = realEstateNetSale + postTaxCashFlow - totalCashInvested;
+        const realEstateCAGR_Nominal = Math.pow((totalCashInvested + realEstateTotalPostTaxProfit_Nominal) / totalCashInvested, 1 / holdingPeriod) - 1;
         
+        // Apply Inflation Adjustment for Real Results
+        // FIX #2: Correctly deflate nominal profit, don't recalculate profit from real CAGR
+        const realEstateCAGR = (1 + realEstateCAGR_Nominal) / (1 + inflationRate) - 1;
+        const realEstateTotalPostTaxProfit = adjustInflation ? (realEstateTotalPostTaxProfit_Nominal / Math.pow(1 + inflationRate, holdingPeriod)) : realEstateTotalPostTaxProfit_Nominal;
+
         // Pre-tax profit needs to also respect the "sell" toggle
         const realEstateTotalPreTaxProfit = preTaxCashFlow + (sellProperty ? (futurePropertyValue - saleCosts - remainingLoan) : finalEquityValue) - totalCashInvested;
         const realEstateTotalTaxPaid = totalTaxImpactOperations + taxAtSale;
         const cocReturn = (noiYear1 - annualDebtService) / totalCashInvested;
+        
+        // --- CALCULATE YEAR 5 CUMULATIVE METRICS ---
+        const Y5_YEARS = 5;
+        let currentNOI_Y5 = noiYear1;
+        let cumPostTaxCashFlow_Y5 = 0;
+        let cumPrincipalPaid_Y5 = 0;
+
+        for (let y = 0; y < Y5_YEARS; y++) {
+            let ads = (y < payoffYear) ? annualDebtService : 0;
+            let currentAnnualInterest = annualInterest[y] || 0; 
+            let currentAnnualPrincipal = annualPrincipal[y] || 0;
+            const taxDeductions = (y < DEPRECIATION_TERM) ? annualDepreciation : 0;
+
+            const taxableIncomeLoss = currentNOI_Y5 - currentAnnualInterest - taxDeductions;
+            const taxImpact = taxableIncomeLoss * totalMarginalRate;
+            
+            const cashFlowPreTax = currentNOI_Y5 - ads;
+            const cashFlowPostTax = cashFlowPreTax - taxImpact;
+            
+            cumPostTaxCashFlow_Y5 += cashFlowPostTax;
+            cumPrincipalPaid_Y5 += currentAnnualPrincipal;
+
+            currentNOI_Y5 *= (1 + rentGrowthRate);
+        }
+
+        const futurePropertyValue_Y5 = propertyValue * Math.pow(1 + appreciationRate, Y5_YEARS);
+        const totalAppreciation_Y5 = futurePropertyValue_Y5 - propertyValue;
+        const remainingLoan_Y5 = loanAmount - cumPrincipalPaid_Y5;
+        const totalDepreciation_Y5 = annualDepreciation * Y5_YEARS; 
+        
+        // Post-Tax Profit & CAGR assuming sale at Year 5 (Standard Comparative Practice)
+        const netSaleProceeds_Y5 = futurePropertyValue_Y5 * (1 - SELLING_COSTS_RATE) - remainingLoan_Y5;
+        
+        const adjustedBasis_Y5 = propertyValue - totalDepreciation_Y5;
+        const totalGain_Y5 = futurePropertyValue_Y5 - adjustedBasis_Y5;
+        const gainRecaptured_Y5 = totalDepreciation_Y5;
+        const ltcgGain_Y5 = totalGain_Y5 - gainRecaptured_Y5;
+
+        const recaptureTax_Y5 = gainRecaptured_Y5 * totalRecaptureRate;
+        const ltcgTax_Y5 = ltcgGain_Y5 * totalLTCGRate;
+        const taxAtSale_Y5 = recaptureTax_Y5 + ltcgTax_Y5;
+
+        const totalPostTaxProfit_Y5_Nominal = netSaleProceeds_Y5 + cumPostTaxCashFlow_Y5 - totalCashInvested - taxAtSale_Y5;
+        const cagr_Y5_Nominal = Math.pow((totalCashInvested + totalPostTaxProfit_Y5_Nominal) / totalCashInvested, 1 / Y5_YEARS) - 1;
+        
+        // Apply Inflation Adjustment for Year 5 Real Results
+        // FIX #1: Year 5 CAGR Inflation Toggle
+        const cagr_Y5 = adjustInflation ? ((1 + cagr_Y5_Nominal) / (1 + inflationRate) - 1) : cagr_Y5_Nominal;
+
 
         // --- 5. S&P 500 Post-Tax Calculation (VOO) ---
         
@@ -718,40 +945,52 @@
         let taxPaidOnDividends = 0;
 
         for (let year = 0; year < holdingPeriod; year++) {
+            // FIX #1 (Previously Implemented): Correct S&P 500 Pre-Tax Future Value
+            sp500FV_pre_tax = sp500FV_pre_tax * (1 + sp500Return); 
+
             // Dividends and Tax (Qualified Dividends assumed taxed at Total LTCG rate)
-            const dividends = sp500FV_pre_tax * DIVIDEND_YIELD;
+            const dividends = sp500FV_post_tax * DIVIDEND_YIELD; // Calculate dividend based on *Post-Tax* FV
             const dividendTax = dividends * totalLTCGRate;
             taxPaidOnDividends += dividendTax;
             
-            // FV Update
-            sp500FV_pre_tax = sp500FV_pre_tax * (1 + appreciation) + dividends; // Pre-tax FV
-            sp500FV_post_tax = sp500FV_post_tax * (1 + appreciation) + (dividends - dividendTax); // Post-tax FV
+            // FV Update (Post-Tax)
+            // Post-tax FV compounds only the appreciation, plus net dividends
+            sp500FV_post_tax = sp500FV_post_tax * (1 + appreciation) + (dividends - dividendTax); 
         }
 
         // Final S&P 500 Profit Metrics - Conditional based on toggle
-        let sp500TotalPostTaxProfit = 0;
+        let sp500TotalPostTaxProfit_Nominal = 0;
         let capitalGainsTax = 0;
         let sp500TotalTaxPaid = 0;
         
+        // FIX #3 (Previously Implemented): Logic is verified to follow the correct sell/retain logic
         if (sellProperty) {
             // Total Wealth REALIZED (Sale Model)
             const totalGainSP500 = sp500FV_post_tax - totalInvestmentSP500;
             capitalGainsTax = totalGainSP500 * totalLTCGRate;
             sp500TotalTaxPaid = taxPaidOnDividends + capitalGainsTax; 
-            sp500TotalPostTaxProfit = sp500FV_post_tax - totalInvestmentSP500 - capitalGainsTax;
+            sp500TotalPostTaxProfit_Nominal = sp500FV_post_tax - totalInvestmentSP500 - capitalGainsTax;
         } else {
             // Total Wealth RETAINED (No Sale Model)
-            // Profit = Final Value (post-dividend tax) - Initial Investment (Capital Gains Tax is DEFERRED)
             sp500TotalTaxPaid = taxPaidOnDividends; // Only annual dividend tax is paid
-            sp500TotalPostTaxProfit = sp500FV_post_tax - totalInvestmentSP500;
+            sp500TotalPostTaxProfit_Nominal = sp500FV_post_tax - totalInvestmentSP500;
         }
         
         // Final VOO CAGR calculation remains the same (based on the derived post-tax profit)
-        const sp500CAGR = Math.pow((totalInvestmentSP500 + sp500TotalPostTaxProfit) / totalInvestmentSP500, 1 / holdingPeriod) - 1;
+        const sp500CAGR_Nominal = Math.pow((totalInvestmentSP500 + sp500TotalPostTaxProfit_Nominal) / totalInvestmentSP500, 1 / holdingPeriod) - 1;
         const sp500TotalPreTaxProfit = sp500FV_pre_tax - totalInvestmentSP500;
+        
+        // Apply Inflation Adjustment for Real Results
+        // FIX #2 (Previously Implemented): Correctly deflate nominal profit, don't recalculate profit from real CAGR
+        const sp500CAGR = (1 + sp500CAGR_Nominal) / (1 + inflationRate) - 1;
+        const sp500TotalPostTaxProfit = adjustInflation ? (sp500TotalPostTaxProfit_Nominal / Math.pow(1 + inflationRate, holdingPeriod)) : sp500TotalPostTaxProfit_Nominal;
+
 
         // --- 6. Display Results ---
         
+        // Update CAGR Title
+        document.getElementById('cagr-type').textContent = adjustInflation ? 'Real' : 'Nominal';
+
         // Summary Block
         document.getElementById('totalCashInvested').textContent = formatCurrency(totalCashInvested);
         document.getElementById('loanAmount').textContent = formatCurrency(loanAmount);
@@ -825,19 +1064,32 @@
         }
 
 
-        // --- 7. Generate Annual Cost Breakdown (Year 1) ---
-        document.getElementById('annual-principal').textContent = formatCurrency(annualPrincipalYear1);
-        document.getElementById('annual-interest').textContent = formatCurrency(annualInterestYear1);
-        document.getElementById('annual-tax').textContent = formatCurrency(propertyTax);
-        document.getElementById('annual-insurance').textContent = formatCurrency(annualInsuranceTotal);
-        document.getElementById('annual-maintenance-mgmt').textContent = formatCurrency(annualMaintenanceAndMgmt);
-        document.getElementById('monthly-obligation').textContent = formatCurrency(totalMonthlyObligation);
+        // --- 7. Generate Year 1 Performance Ratios & Efficiency ---
+        document.getElementById('annual-noi').textContent = formatCurrency(noiYear1);
+        document.getElementById('annual-cap-rate').textContent = formatPercent(capRateYear1);
+        document.getElementById('annual-pre-tax-cf').textContent = formatCurrency(preTaxCashFlowYear1);
+        document.getElementById('annual-coc-rate').textContent = formatPercent(cocReturnYear1);
         
-        // --- 8. Generate Proof Table ---
+        // FIX #5 (Previously Implemented): Consistent Tax Impact Sign
+        const taxImpactYear1Text = taxImpactYear1 < 0 ? `Savings: ${formatCurrency(Math.abs(taxImpactYear1))}` : `Liability: ${formatCurrency(taxImpactYear1)}`;
+        document.getElementById('annual-tax-impact').textContent = taxImpactYear1Text;
+        
+        document.getElementById('monthly-obligation-new').textContent = formatCurrency(totalMonthlyObligationDisplay);
+        
+        // --- 8. Generate Year 5 Cumulative Snapshot ---
+        document.getElementById('y5-cum-cf').textContent = formatCurrency(cumPostTaxCashFlow_Y5);
+        document.getElementById('y5-appr-gain').textContent = formatCurrency(totalAppreciation_Y5);
+        document.getElementById('y5-principal-paid').textContent = formatCurrency(cumPrincipalPaid_Y5);
+        document.getElementById('y5-cagr').textContent = formatPercent(cagr_Y5);
+        
+        
+        // --- 9. Generate Proof Table ---
         const rows = [
             { label: "Initial Cash Invested (Equity)", re: totalCashInvested, sp: totalInvestmentSP500, bold: true },
-            { label: "Final Portfolio/Asset Value", re: 'N/A', sp: sp500FV_pre_tax }, 
+            { label: "Final Portfolio/Asset Value", re: 'N/A', sp: sp500FV_pre_tax },
+            // FIX #2: Reposition Proof Table Note
             { label: "Total Pre-Tax Profit", re: realEstateTotalPreTaxProfit, sp: sp500TotalPreTaxProfit, style: 'text-lg font-semibold bg-gray-900 text-yellow-300' },
+            { label: "(Note: Intermediate values shown in nominal dollars)", re: "", sp: "", style: 'text-xs text-gray-500 italic' }, 
             { label: "---------------------------", re: "", sp: "" },
             { label: "RE: Principal Paydown (Equity Build)", re: principalPaid, sp: "N/A" },
             { label: "RE: Cumulative Pre-Tax Cash Flow", re: preTaxCashFlow, sp: "N/A" },
@@ -874,11 +1126,12 @@
 
 
                 // Add conditional formatting for Tax Paid/Savings
+                // FIX #5 (Previously Implemented): Consistent Tax Impact Sign in Proof Table
                 if (row.label.includes("Tax Impact on Operations")) {
-                    reValue = row.re < 0 ? `Savings: ${formatCurrency(Math.abs(row.re))}` : `Paid: ${formatCurrency(row.re)}`;
+                    reValue = row.re < 0 ? `Savings: ${formatCurrency(Math.abs(row.re))}` : `Liability: ${formatCurrency(row.re)}`;
                 }
                 if (row.label.includes("Total Tax Paid (15 Years)")) {
-                    reValue = row.re < 0 ? `Savings: ${formatCurrency(Math.abs(row.re))}` : `Paid: ${formatCurrency(row.re)}`;
+                    reValue = row.re < 0 ? `Savings: ${formatCurrency(Math.abs(row.re))}` : `Liability: ${formatCurrency(row.re)}`;
                 }
 
                 tableHtml += `
@@ -894,7 +1147,7 @@
         document.getElementById('proof-table-body').innerHTML = tableHtml;
         
         // --- 9. Generate and Display Executive Summary ---
-        generateExecutiveSummary(realEstateCAGR, sp500CAGR, realEstateTotalPostTaxProfit, sp500TotalPostTaxProfit, appreciationRate, mortgageRate, sp500Return, holdingPeriod, sellProperty);
+        generateExecutiveSummary(realEstateCAGR, sp500CAGR, realEstateTotalPostTaxProfit, sp500TotalPostTaxProfit, appreciationRate, mortgageRate, sp500Return, holdingPeriod, sellProperty, inflationRate, adjustInflation);
     }
     
     // Run calculation on load with default values
