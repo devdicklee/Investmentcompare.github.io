@@ -160,7 +160,7 @@
 
 <div class="container mx-auto p-4 md:p-8 max-w-6xl">
     <h1 class="text-4xl font-bold text-center mb-2">Leveraged Investment Comparator</h1>
-    <p class="text-center text-gray-400 mb-8">Compare Real Estate (RE) post-tax growth vs. S&P 500 (VOO) over 15 years.</p>
+    <p class="text-center text-gray-400 mb-8">Compare Real Estate (RE) post-tax growth vs. S&P 500 (VOO).</p>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Input Panel --><div class="lg:col-span-1 card p-6 rounded-xl shadow-xl h-full">
@@ -433,6 +433,8 @@
         <h2 class="text-3xl font-bold mb-4 text-white card-header pl-3">Glossary of Terms</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
             
+            <h3 class="col-span-2 font-bold text-white mt-2 mb-1 border-b border-gray-700 pb-1">Core Return Metrics</h3>
+
             <div class="p-4 bg-gray-900 rounded-lg">
                 <p class="font-bold text-accent-green mb-1">CAGR (Compound Annual Growth Rate)</p>
                 <p class="text-gray-400">The average annual rate of return over the investment horizon, assuming profits are reinvested. It is the single best metric for comparing different asset classes.</p>
@@ -442,45 +444,99 @@
                 <p class="font-bold text-accent-green mb-1">Nominal Return vs. Real Return</p>
                 <p class="text-gray-400">**Nominal** is the return in today's dollars. **Real** is the return adjusted for inflation, showing the actual gain in purchasing power.</p>
             </div>
-
+            
             <div class="p-4 bg-gray-900 rounded-lg">
                 <p class="font-bold text-accent-green mb-1">Cap Rate (Capitalization Rate)</p>
-                <p class="text-gray-400">Measures the property's unleveraged profitability: Net Operating Income (NOI) $\div$ Property Value. It assumes an all-cash purchase.</p>
+                <p class="text-gray-400">Measures the property's unleveraged profitability: Net Operating Income (NOI) $\div$ Property Value. It assumes an all-cash purchase (Year 1).</p>
             </div>
 
             <div class="p-4 bg-gray-900 rounded-lg">
                 <p class="font-bold text-accent-green mb-1">Cash-on-Cash (CoC) Return</p>
-                <p class="text-gray-400">Measures the annual pre-tax cash flow relative to the total cash invested (down payment + closing costs). This is the key metric for leveraged cash flow.</p>
-            </div>
-
-            <div class="p-4 bg-gray-900 rounded-lg">
-                <p class="font-bold text-accent-green mb-1">NOI (Net Operating Income)</p>
-                <p class="text-gray-400">The property's annual income after deducting all operating expenses (taxes, insurance, maintenance, management) but **before** deducting debt service (P&I) or income taxes.</p>
+                <p class="text-gray-400">Measures the annual pre-tax cash flow relative to the total cash invested (down payment + closing costs). This is the key metric for leveraged cash flow (Year 1).</p>
             </div>
             
+            <h3 class="col-span-2 font-bold text-white mt-4 mb-1 border-b border-gray-700 pb-1">Operational & Cash Flow Metrics</h3>
+
             <div class="p-4 bg-gray-900 rounded-lg">
                 <p class="font-bold text-accent-green mb-1">EGI (Effective Gross Income)</p>
                 <p class="text-gray-400">The property's total potential rental income minus losses from vacancy and non-payment.</p>
             </div>
-
+            
             <div class="p-4 bg-gray-900 rounded-lg">
-                <p class="font-bold text-accent-green mb-1">Equity Build (Principal Paydown)</p>
-                <p class="text-gray-400">The non-taxable portion of your monthly mortgage payment that reduces the loan balance and increases your ownership equity.</p>
+                <p class="font-bold text-accent-green mb-1">Net Operating Income (NOI)</p>
+                <p class="text-gray-400">The property's annual income after deducting all operational expenses (taxes, insurance, maintenance, management) but **before** deducting debt service (P&I) or income taxes.</p>
             </div>
 
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Cash Flow After Debt (Pre-Tax)</p>
+                <p class="text-gray-400">The annual cash flow remaining after paying all operating expenses and the full mortgage payment (P&I), before income taxes (Year 1).</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Monthly Cash Obligation (PITI + OpEx)</p>
+                <p class="text-gray-400">The total average monthly amount of money leaving your bank account for the property, including Principal, Interest, Property Taxes, Insurance, and Operating Expenses (Maintenance/Management).</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Cumulative Post-Tax Cash Flow</p>
+                <p class="text-gray-400">The total sum of all rental cash flow received over the entire investment horizon, net of mortgage payments and adjusted for the annual tax impact of rental income/loss.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Avg. Annual Post-Payoff Cash Flow Yield</p>
+                <p class="text-gray-400">The annual post-tax cash flow earned *after* the mortgage is fully paid, expressed as a percentage return on the original initial cash investment.</p>
+            </div>
+            
+            <h3 class="col-span-2 font-bold text-white mt-4 mb-1 border-b border-gray-700 pb-1">Total Wealth & Tax Metrics</h3>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Initial Cash Invested (Equity)</p>
+                <p class="text-gray-400">The total cash outlay required for the investment, including the down payment and all closing costs (for both RE and VOO comparisons).</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Total Post-Tax Profit</p>
+                <p class="text-gray-400">The final, spendable cash or retained wealth after all taxes, debt service, and costs have been accounted for. This is the figure used to calculate the final CAGR.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Final Portfolio/Asset Value</p>
+                <p class="text-gray-400">The calculated pre-tax market value of the asset (RE Future Value or VOO Portfolio Value) at the end of the holding period.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Future Property Value (Appreciation)</p>
+                <p class="text-gray-400">The estimated market value of the real estate asset at the end of the holding period, calculated by compounding the initial price at the appreciation rate.</p>
+            </div>
+            
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Total Equity Build (Principal Paydown)</p>
+                <p class="text-gray-400">The total non-taxable portion of your mortgage payments that reduced the loan balance and increased your ownership equity over the full horizon.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Total Appreciation Gain (Pre-Tax)</p>
+                <p class="text-gray-400">The increase in the property's market value from the purchase price to the calculation date (Year 5 or end of horizon).</p>
+            </div>
+            
             <div class="p-4 bg-gray-900 rounded-lg">
                 <p class="font-bold text-accent-green mb-1">Depreciation (Tax Shield)</p>
                 <p class="text-gray-400">A non-cash deductible expense that reduces the property's taxable income, often creating a "phantom loss" that shelters rental cash flow from taxes.</p>
             </div>
-            
+
             <div class="p-4 bg-gray-900 rounded-lg">
-                <p class="font-bold text-accent-green mb-1">Depreciation Recapture Tax</p>
-                <p class="text-gray-400">The tax liability incurred upon sale for the total amount of depreciation claimed over the years. This portion is taxed at the Federal rate of 25% plus the State Marginal Rate.</p>
+                <p class="font-bold text-accent-green mb-1">Net Tax Savings / Liability (from Operations)</p>
+                <p class="text-gray-400">The sum of all annual tax impacts (savings from depreciation/interest deductions, or liability from positive rental income) over the holding period. A negative number indicates total tax savings.</p>
             </div>
             
             <div class="p-4 bg-gray-900 rounded-lg">
-                <p class="font-bold text-accent-green mb-1">LTCG (Long-Term Capital Gains)</p>
-                <p class="text-gray-400">The profit from the sale of an asset (real estate appreciation or stocks) held for over a year. Taxed at favorable lower rates (Federal 20% + State Marginal Rate).</p>
+                <p class="font-bold text-accent-green mb-1">Total Tax Paid (All Sources)</p>
+                <p class="text-gray-400">The sum of all taxes paid, including annual VOO dividend tax, operating tax impacts for RE, and the final tax due upon sale.</p>
+            </div>
+
+            <div class="p-4 bg-gray-900 rounded-lg">
+                <p class="font-bold text-accent-green mb-1">Tax Due on Sale (Recapture + LTCG)</p>
+                <p class="text-gray-400">The total liability incurred upon selling the asset, consisting of Depreciation Recapture Tax (25% rate) and Long-Term Capital Gains Tax (LTCG).</p>
             </div>
 
         </div>
@@ -654,13 +710,24 @@
             summary += `<p class="mt-4 text-yellow-300 font-medium">**Note on No-Sale Scenario:** When retaining the asset, the ${reProfitFormatted} profit represents the total *retained wealth* (equity + cash flow). This strategy prioritizes long-term income over a final cash liquidation.</p>`;
         }
         
-        // --- Tipping Point ---
-        summary += `<h4 class="font-bold text-white mt-6 mb-2 text-lg border-b border-gray-700 pb-1">Tipping Point Analysis: How Real Estate Could Win</h4>`;
-        summary += `<p class="text-gray-400">The **${lesserOption}** is currently losing because the **operational friction** (debt service, high property tax, and maintenance) is greater than the financial benefit derived from the ${formatPercent(appreciationRate)} growth rate. To flip the result, you would need exceptional performance:</p>`;
-        summary += `<ul class="list-disc list-inside ml-4 space-y-1 text-gray-400">`;
-        summary += `<li>**Appreciation:** An average appreciation rate closer to **6.5% - 7.0%** is typically required to make the leveraged gain offset the stock market's compounding rate.</li>`;
-        summary += `<li>**Financing:** A much lower mortgage rate (below 3.5%) significantly reduces the largest annual drag on cash flow.</li>`;
-        summary += `</ul>`;
+        // --- Tipping Point (Dynamic Logic Implemented) ---
+        summary += `<h4 class="font-bold text-white mt-6 mb-2 text-lg border-b border-gray-700 pb-1">Tipping Point Analysis: How the ${lesserOption} Could Win</h4>`;
+        
+        if (re_cagr < sp500_cagr) {
+             // Scenario A: Real Estate Lost (Need RE to increase)
+             summary += `<p class="text-gray-400">The Real Estate investment currently falls short because the **operational friction** (debt service, high property tax, and maintenance) is greater than the benefit derived from the ${formatPercent(appreciationRate)} appreciation rate. To reverse this outcome, you would need exceptional performance from real estate:</p>`;
+             summary += `<ul class="list-disc list-inside ml-4 space-y-1 text-gray-400">`;
+             summary += `<li>**Appreciation:** A significantly higher average appreciation rate (e.g., **6.5% - 7.0%**) is typically required to make the leveraged gain offset the stock market's compounding.</li>`;
+             summary += `<li>**Financing:** A much lower mortgage rate (e.g., **below 4.0%**) dramatically reduces the largest annual drag on cash flow.</li>`;
+             summary += `</ul>`;
+        } else {
+             // Scenario B: Real Estate Won (Need S&P to increase)
+             summary += `<p class="text-gray-400">The Real Estate investment successfully won this comparison, primarily due to the power of **leverage and the tax shield** overcoming the high operational costs. To reverse this outcome, the S&P 500 would need to perform much better than assumed:</p>`;
+             summary += `<ul class="list-disc list-inside ml-4 space-y-1 text-gray-400">`;
+             summary += `<li>**Market Return:** The VOO annual return would need to be substantially higher (e.g., **12.0% - 13.0%** nominal) to generate compounding growth that outpaces the leveraged real estate gains.</li>`;
+             summary += `<li>**Tax Efficiency:** Moving the VOO investment into a tax-advantaged retirement account (like a Roth IRA or 401k) would eliminate the annual tax drag on dividends, boosting its competitiveness significantly.</li>`;
+             summary += `</ul>`;
+        }
 
 
         document.getElementById('executive-summary-content').innerHTML = summary;
